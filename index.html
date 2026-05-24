@@ -1,6 +1,608 @@
 <!DOCTYPE html>
-<html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Frontend Test Cheatsheet — React / TypeScript</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d0d0f;
+    --surface: #141416;
+    --surface2: #1c1c1f;
+    --border: rgba(255,255,255,0.08);
+    --border2: rgba(255,255,255,0.14);
+    --text: #e8e8e0;
+    --muted: #7a7a72;
+    --accent: #c8f060;
+    --accent2: #60c8f0;
+    --accent3: #f06080;
+    --amber: #f0b860;
+    --mono: 'IBM Plex Mono', monospace;
+    --sans: 'Syne', sans-serif;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 15px;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  /* Header */
+  header {
+    padding: 3rem 2rem 2rem;
+    max-width: 900px;
+    margin: 0 auto;
+    border-bottom: 1px solid var(--border);
+  }
+  .header-label {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+  h1 {
+    font-size: clamp(2rem, 5vw, 3.2rem);
+    font-weight: 800;
+    line-height: 1.1;
+    letter-spacing: -0.03em;
+    color: #fff;
+  }
+  h1 span { color: var(--accent); }
+  .header-sub {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 12px;
+  }
+  .header-tags {
+    display: flex; gap: 8px; flex-wrap: wrap; margin-top: 16px;
+  }
+  .htag {
+    font-family: var(--mono);
+    font-size: 11px;
+    padding: 3px 10px;
+    border: 1px solid var(--border2);
+    border-radius: 20px;
+    color: var(--muted);
+  }
+
+  /* Layout */
+  main {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  /* Section label */
+  .section-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* Card */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  .card-head {
+    padding: 16px 20px 14px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .card-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: -0.01em;
+  }
+  .card-body { padding: 20px; }
+
+  /* Badge */
+  .badge {
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 500;
+    padding: 2px 8px;
+    border-radius: 4px;
+    letter-spacing: 0.05em;
+  }
+  .b-unit  { background: rgba(96,200,240,0.15); color: var(--accent2); border: 1px solid rgba(96,200,240,0.25); }
+  .b-ui    { background: rgba(200,240,96,0.12); color: var(--accent); border: 1px solid rgba(200,240,96,0.22); }
+  .b-async { background: rgba(240,184,96,0.12); color: var(--amber); border: 1px solid rgba(240,184,96,0.22); }
+  .b-ts    { background: rgba(240,96,128,0.12); color: var(--accent3); border: 1px solid rgba(240,96,128,0.22); }
+
+  /* Decision flow */
+  .flow { display: flex; flex-direction: column; gap: 0; }
+  .flow-row {
+    display: grid;
+    grid-template-columns: 1fr 24px 1fr;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+  }
+  .decision {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 12px;
+    color: var(--muted);
+  }
+  .decision strong {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 2px;
+    font-family: var(--sans);
+  }
+  .arr {
+    text-align: center;
+    color: var(--muted);
+    font-size: 14px;
+  }
+  .result {
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 500;
+    line-height: 1.5;
+  }
+  .r-blue   { background: rgba(96,200,240,0.08); border: 1px solid rgba(96,200,240,0.2); color: var(--accent2); }
+  .r-green  { background: rgba(200,240,96,0.08); border: 1px solid rgba(200,240,96,0.18); color: var(--accent); }
+  .r-amber  { background: rgba(240,184,96,0.08); border: 1px solid rgba(240,184,96,0.18); color: var(--amber); }
+  .r-red    { background: rgba(240,96,128,0.08); border: 1px solid rgba(240,96,128,0.18); color: var(--accent3); }
+  .flow-sep {
+    text-align: center;
+    color: var(--border2);
+    font-size: 14px;
+    margin: 2px 0;
+    grid-column: 1 / -1;
+  }
+
+  /* Code block */
+  .code {
+    font-family: var(--mono);
+    font-size: 12px;
+    background: #0a0a0c;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px;
+    margin-top: 14px;
+    line-height: 1.7;
+    overflow-x: auto;
+    white-space: pre;
+  }
+  .kw  { color: #c792ea; }
+  .str { color: var(--accent); }
+  .cmt { color: #4a4a55; }
+  .fn  { color: var(--accent2); }
+  .tag { color: var(--accent3); }
+  .num { color: var(--amber); }
+
+  /* Priority list */
+  .priority-list { display: flex; flex-direction: column; gap: 6px; }
+  .priority-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 14px;
+    border-radius: 8px;
+    font-size: 12px;
+  }
+  .pnum {
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 500;
+    min-width: 28px;
+    text-align: center;
+    padding: 2px 6px;
+    border-radius: 4px;
+  }
+  .p1 { background: rgba(200,240,96,0.15); color: var(--accent); }
+  .p2 { background: rgba(96,200,240,0.12); color: var(--accent2); }
+  .p3 { background: rgba(96,200,240,0.08); color: #4a8fa8; }
+  .p4 { background: rgba(240,96,128,0.1); color: var(--accent3); }
+  .pi-content strong { display: block; font-size: 12px; color: var(--text); font-weight: 600; }
+  .pi-content span   { font-family: var(--mono); font-size: 11px; color: var(--muted); }
+
+  /* Two col */
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  /* Avoid tags */
+  .avoid-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+  .avoid-tag {
+    font-family: var(--mono);
+    font-size: 11px;
+    padding: 4px 10px;
+    border: 1px solid var(--border2);
+    border-radius: 20px;
+    color: var(--muted);
+    background: var(--surface2);
+  }
+
+  /* Divider */
+  hr { border: none; border-top: 1px solid var(--border); margin: 4px 0; }
+
+  /* Footer */
+  footer {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 1.5rem 2rem 3rem;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted);
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  @media (max-width: 600px) {
+    main { padding: 1.2rem; gap: 1.4rem; }
+    header { padding: 2rem 1.2rem 1.5rem; }
+    .flow-row { grid-template-columns: 1fr 20px 1fr; }
+    .two-col { grid-template-columns: 1fr; }
+    h1 { font-size: 1.8rem; }
+  }
+</style>
+</head>
 <body>
-  <h1>Hello, World!</h1>
+
+<header>
+  <div class="header-label">// cheatsheet v1.0</div>
+  <h1>Frontend<br><span>Test</span> Patterns</h1>
+  <p class="header-sub">実装を見てテストを選ぶ — 標準化ガイド</p>
+  <div class="header-tags">
+    <span class="htag">React</span>
+    <span class="htag">TypeScript</span>
+    <span class="htag">Jest / Vitest</span>
+    <span class="htag">Testing Library</span>
+  </div>
+</header>
+
+<main>
+
+  <!-- ① 振り分け -->
+  <div>
+    <div class="section-label">01 — 何をテストするか決める</div>
+    <div class="card">
+      <div class="card-body">
+        <div class="flow">
+          <div class="flow-row">
+            <div class="decision"><strong>関数・ロジック</strong>値を返す／変換する処理</div>
+            <div class="arr">→</div>
+            <div class="result r-blue"><span class="badge b-unit">単体テスト</span><br>Jest / Vitest</div>
+          </div>
+          <div style="text-align:center;color:var(--border2);font-size:13px;margin:2px 0">↓</div>
+          <div class="flow-row">
+            <div class="decision"><strong>UIコンポーネント</strong>表示・インタラクション</div>
+            <div class="arr">→</div>
+            <div class="result r-green"><span class="badge b-ui">コンポーネント</span><br>Testing Library</div>
+          </div>
+          <div style="text-align:center;color:var(--border2);font-size:13px;margin:2px 0">↓</div>
+          <div class="flow-row">
+            <div class="decision"><strong>API・非同期処理</strong>fetch / Promise</div>
+            <div class="arr">→</div>
+            <div class="result r-amber"><span class="badge b-async">非同期テスト</span><br>mock + async/await</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ② 単体テスト -->
+  <div>
+    <div class="section-label">02 — 単体テスト（関数・ロジック）</div>
+    <div class="card">
+      <div class="card-head">
+        <span class="badge b-unit">UNIT</span>
+        <span class="card-title">パターン選択フロー</span>
+      </div>
+      <div class="card-body">
+        <div class="flow">
+          <div class="flow-row">
+            <div class="decision"><strong>値を返す関数？</strong>引数 → 戻り値</div>
+            <div class="arr">→</div>
+            <div class="result r-blue">expect(fn(x)).toBe(y)</div>
+          </div>
+          <div style="text-align:center;color:var(--border2);font-size:13px;margin:2px 0">↓</div>
+          <div class="flow-row">
+            <div class="decision"><strong>エラーを投げる？</strong>バリデーション等</div>
+            <div class="arr">→</div>
+            <div class="result r-red">expect(() => fn()).toThrow()</div>
+          </div>
+          <div style="text-align:center;color:var(--border2);font-size:13px;margin:2px 0">↓</div>
+          <div class="flow-row">
+            <div class="decision"><strong>オブジェクト・配列？</strong>構造を検証</div>
+            <div class="arr">→</div>
+            <div class="result r-blue">toEqual / toMatchObject</div>
+          </div>
+          <div style="text-align:center;color:var(--border2);font-size:13px;margin:2px 0">↓</div>
+          <div class="flow-row">
+            <div class="decision"><strong>複数ケースを網羅？</strong>境界値・異常値</div>
+            <div class="arr">→</div>
+            <div class="result r-blue">test.each([...cases])</div>
+          </div>
+        </div>
+        <div class="code"><span class="cmt">// 例: formatPrice(1000) → "¥1,000"</span>
+<span class="kw">describe</span>(<span class="str">'formatPrice'</span>, () => {
+  <span class="fn">it</span>(<span class="str">'正常値を整形する'</span>, () => {
+    <span class="fn">expect</span>(<span class="fn">formatPrice</span>(<span class="num">1000</span>)).<span class="fn">toBe</span>(<span class="str">'¥1,000'</span>)
+  })
+  <span class="fn">it</span>(<span class="str">'負の値でエラーを投げる'</span>, () => {
+    <span class="fn">expect</span>(() => <span class="fn">formatPrice</span>(-<span class="num">1</span>)).<span class="fn">toThrow</span>(<span class="str">'Invalid amount'</span>)
+  })
+  <span class="fn">test</span>.<span class="fn">each</span>([
+    [<span class="num">0</span>,    <span class="str">'¥0'</span>],
+    [<span class="num">999</span>,  <span class="str">'¥999'</span>],
+    [<span class="num">10000</span>,<span class="str">'¥10,000'</span>],
+  ])(<span class="str">'formatPrice(%i) → %s'</span>, (input, expected) => {
+    <span class="fn">expect</span>(<span class="fn">formatPrice</span>(input)).<span class="fn">toBe</span>(expected)
+  })
+})</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ③ UIコンポーネント -->
+  <div>
+    <div class="section-label">03 — UIコンポーネントテスト</div>
+    <div class="card">
+      <div class="card-head">
+        <span class="badge b-ui">UI</span>
+        <span class="card-title">パターン選択フロー</span>
+      </div>
+      <div class="card-body">
+        <div class="flow">
+          <div class="flow-row">
+            <div class="decision"><strong>表示確認？</strong>テキスト・要素の存在</div>
+            <div class="arr">→</div>
+            <div class="result r-green">getByText / getByRole</div>
+          </div>
+          <div style="text-align:center;color:var(--border2);font-size:13px;margin:2px 0">↓</div>
+          <div class="flow-row">
+            <div class="decision"><strong>クリック・入力？</strong>ユーザー操作を再現</div>
+            <div class="arr">→</div>
+            <div class="result r-green">userEvent.click / type</div>
+          </div>
+          <div style="text-align:center;color:var(--border2);font-size:13px;margin:2px 0">↓</div>
+          <div class="flow-row">
+            <div class="decision"><strong>条件付き表示？</strong>props / stateで変化</div>
+            <div class="arr">→</div>
+            <div class="result r-amber">rerender / queryByText</div>
+          </div>
+          <div style="text-align:center;color:var(--border2);font-size:13px;margin:2px 0">↓</div>
+          <div class="flow-row">
+            <div class="decision"><strong>存在しないことを確認？</strong>非表示・削除後</div>
+            <div class="arr">→</div>
+            <div class="result r-red">not.toBeInTheDocument()</div>
+          </div>
+        </div>
+        <div class="code"><span class="cmt">// 例: Buttonコンポーネント</span>
+<span class="kw">import</span> { <span class="fn">render</span>, <span class="fn">screen</span> } <span class="kw">from</span> <span class="str">'@testing-library/react'</span>
+<span class="kw">import</span> userEvent <span class="kw">from</span> <span class="str">'@testing-library/user-event'</span>
+
+<span class="fn">it</span>(<span class="str">'クリックでonClickが呼ばれる'</span>, <span class="kw">async</span> () => {
+  <span class="kw">const</span> onClick = <span class="fn">jest.fn</span>()
+  <span class="fn">render</span>(<span class="tag">&lt;Button</span> onClick={onClick}<span class="tag">&gt;</span>送信<span class="tag">&lt;/Button&gt;</span>)
+  <span class="kw">await</span> userEvent.<span class="fn">click</span>(screen.<span class="fn">getByRole</span>(<span class="str">'button'</span>))
+  <span class="fn">expect</span>(onClick).<span class="fn">toHaveBeenCalledOnce</span>()
+})
+
+<span class="fn">it</span>(<span class="str">'disabled時はクリックできない'</span>, <span class="kw">async</span> () => {
+  <span class="kw">const</span> onClick = <span class="fn">jest.fn</span>()
+  <span class="fn">render</span>(<span class="tag">&lt;Button</span> disabled onClick={onClick}<span class="tag">&gt;</span>送信<span class="tag">&lt;/Button&gt;</span>)
+  <span class="kw">await</span> userEvent.<span class="fn">click</span>(screen.<span class="fn">getByRole</span>(<span class="str">'button'</span>))
+  <span class="fn">expect</span>(onClick).<span class="fn">not</span>.<span class="fn">toHaveBeenCalled</span>()
+})</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ④ 非同期 -->
+  <div>
+    <div class="section-label">04 — 非同期・APIテスト</div>
+    <div class="card">
+      <div class="card-head">
+        <span class="badge b-async">ASYNC</span>
+        <span class="card-title">パターン選択フロー</span>
+      </div>
+      <div class="card-body">
+        <div class="flow">
+          <div class="flow-row">
+            <div class="decision"><strong>APIを呼ぶ関数？</strong>fetch / axios</div>
+            <div class="arr">→</div>
+            <div class="result r-amber">jest.mock でモック化</div>
+          </div>
+          <div style="text-align:center;color:var(--border2);font-size:13px;margin:2px 0">↓</div>
+          <div class="flow-row">
+            <div class="decision"><strong>成功時の表示確認？</strong>データ取得後のUI</div>
+            <div class="arr">→</div>
+            <div class="result r-green">await findByText()</div>
+          </div>
+          <div style="text-align:center;color:var(--border2);font-size:13px;margin:2px 0">↓</div>
+          <div class="flow-row">
+            <div class="decision"><strong>エラー時の表示確認？</strong>失敗ハンドリング</div>
+            <div class="arr">→</div>
+            <div class="result r-red">mockRejectedValue → findByText</div>
+          </div>
+          <div style="text-align:center;color:var(--border2);font-size:13px;margin:2px 0">↓</div>
+          <div class="flow-row">
+            <div class="decision"><strong>ローディング状態？</strong>取得中のUI</div>
+            <div class="arr">→</div>
+            <div class="result r-amber">getByText('読み込み中')</div>
+          </div>
+        </div>
+        <div class="code"><span class="cmt">// 例: データ取得コンポーネント</span>
+<span class="fn">jest.mock</span>(<span class="str">'../api'</span>)
+
+<span class="fn">it</span>(<span class="str">'データ取得後に一覧表示'</span>, <span class="kw">async</span> () => {
+  (api.<span class="fn">getUsers</span> <span class="kw">as</span> jest.Mock).<span class="fn">mockResolvedValue</span>([
+    { id: <span class="num">1</span>, name: <span class="str">'田中'</span> }
+  ])
+  <span class="fn">render</span>(<span class="tag">&lt;UserList /&gt;</span>)
+  <span class="fn">expect</span>(<span class="kw">await</span> screen.<span class="fn">findByText</span>(<span class="str">'田中'</span>)).<span class="fn">toBeInTheDocument</span>()
+})
+
+<span class="fn">it</span>(<span class="str">'失敗時にエラーメッセージ表示'</span>, <span class="kw">async</span> () => {
+  (api.<span class="fn">getUsers</span> <span class="kw">as</span> jest.Mock).<span class="fn">mockRejectedValue</span>(<span class="kw">new</span> <span class="fn">Error</span>(<span class="str">'Network error'</span>))
+  <span class="fn">render</span>(<span class="tag">&lt;UserList /&gt;</span>)
+  <span class="fn">expect</span>(<span class="kw">await</span> screen.<span class="fn">findByText</span>(<span class="str">'エラーが発生しました'</span>)).<span class="fn">toBeInTheDocument</span>()
+})</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ⑤ クエリ優先順位 -->
+  <div>
+    <div class="section-label">05 — クエリの優先順位（Testing Library）</div>
+    <div class="card">
+      <div class="card-head">
+        <span class="card-title">アクセシビリティに優れた順に使う</span>
+      </div>
+      <div class="card-body">
+        <div class="priority-list">
+          <div class="priority-item" style="background:rgba(200,240,96,0.05);border:1px solid rgba(200,240,96,0.12);border-radius:8px">
+            <div class="pnum p1">1st</div>
+            <div class="pi-content">
+              <strong>getByRole</strong>
+              <span>button, link, heading, textbox, checkbox — ARIAロール</span>
+            </div>
+          </div>
+          <div class="priority-item" style="background:rgba(96,200,240,0.05);border:1px solid rgba(96,200,240,0.1);border-radius:8px">
+            <div class="pnum p2">2nd</div>
+            <div class="pi-content">
+              <strong>getByLabelText</strong>
+              <span>フォームラベルと関連付けられた要素</span>
+            </div>
+          </div>
+          <div class="priority-item" style="background:rgba(96,200,240,0.03);border:1px solid rgba(96,200,240,0.08);border-radius:8px">
+            <div class="pnum p3">3rd</div>
+            <div class="pi-content">
+              <strong>getByText / getByPlaceholderText</strong>
+              <span>テキスト内容・プレースホルダー</span>
+            </div>
+          </div>
+          <div class="priority-item" style="background:rgba(240,96,128,0.04);border:1px solid rgba(240,96,128,0.12);border-radius:8px">
+            <div class="pnum p4">最後</div>
+            <div class="pi-content">
+              <strong>getByTestId</strong>
+              <span>実装の詳細に依存するため、他の手段がない場合のみ使用</span>
+            </div>
+          </div>
+        </div>
+        <div class="code"><span class="cmt">// ✅ Good — ロールで取得</span>
+screen.<span class="fn">getByRole</span>(<span class="str">'button'</span>, { name: <span class="str">'送信'</span> })
+
+<span class="cmt">// ✅ Good — ラベルで取得</span>
+screen.<span class="fn">getByLabelText</span>(<span class="str">'メールアドレス'</span>)
+
+<span class="cmt">// ❌ Avoid — 実装詳細に依存</span>
+screen.<span class="fn">getByTestId</span>(<span class="str">'submit-btn'</span>)</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ⑥ TypeScript -->
+  <div>
+    <div class="section-label">06 — TypeScript テストのポイント</div>
+    <div class="card">
+      <div class="card-head">
+        <span class="badge b-ts">TS</span>
+        <span class="card-title">型安全なテストの書き方</span>
+      </div>
+      <div class="card-body">
+        <div class="two-col">
+          <div>
+            <div class="decision"><strong>Props の型を担保</strong>型エラーをコンパイル時に検出</div>
+            <div class="code" style="margin-top:8px"><span class="cmt">// 型定義をそのまま使う</span>
+<span class="kw">const</span> props: <span class="fn">ButtonProps</span> = {
+  label: <span class="str">'送信'</span>,
+  onClick: <span class="fn">vi.fn</span>(),
+  disabled: <span class="kw">false</span>,
+}</div>
+          </div>
+          <div>
+            <div class="decision"><strong>satisfies でモックデータ</strong>型を絞って誤入力防止</div>
+            <div class="code" style="margin-top:8px"><span class="cmt">// satisfiesで型安全に</span>
+<span class="kw">const</span> mockUser = {
+  id: <span class="num">1</span>,
+  name: <span class="str">'田中'</span>,
+  email: <span class="str">'t@example.com'</span>
+} <span class="kw">satisfies</span> <span class="fn">User</span></div>
+          </div>
+        </div>
+        <div class="code" style="margin-top:12px"><span class="cmt">// jest.Mockで型付きモック関数</span>
+<span class="kw">const</span> mockFetch = <span class="fn">jest.fn</span>() <span class="kw">as</span> jest.MockedFunction&lt;<span class="kw">typeof</span> fetch&gt;
+mockFetch.<span class="fn">mockResolvedValue</span>({
+  json: () => <span class="fn">Promise.resolve</span>({ id: <span class="num">1</span> }),
+  ok: <span class="kw">true</span>,
+} <span class="kw">as</span> Response)</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ⑦ テストしないもの -->
+  <div>
+    <div class="section-label">07 — テストしなくていいもの</div>
+    <div class="card">
+      <div class="card-body">
+        <p style="font-size:12px;color:var(--muted);margin-bottom:12px">スコープを絞ることで保守コストを下げる</p>
+        <div class="avoid-tags">
+          <span class="avoid-tag">ライブラリ内部の動作</span>
+          <span class="avoid-tag">CSSスタイルの詳細</span>
+          <span class="avoid-tag">state を直接確認する</span>
+          <span class="avoid-tag">サードパーティの過剰モック</span>
+          <span class="avoid-tag">スナップショットのみのテスト</span>
+          <span class="avoid-tag">実装の詳細（内部メソッド）</span>
+          <span class="avoid-tag">console.logの出力</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<footer>
+  <span>frontend-test-cheatsheet</span>
+  <span>React / TypeScript / Testing Library</span>
+</footer>
+
 </body>
 </html>
