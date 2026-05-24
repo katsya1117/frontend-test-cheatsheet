@@ -1,1 +1,1 @@
-# frontend-test-cheatsheet.github.io
+# frontend-test-cheatsheet
